@@ -22,7 +22,7 @@ function main()
 
 	generateTestCases()
 
-	fakeDemo();
+	
 
 }
 
@@ -132,9 +132,9 @@ function generateTestCases()
 			var constraint = constraints[c];
 			if( params.hasOwnProperty( constraint.ident ) )
 			{
-				//params[constraint.ident] = constraint.value;
+				
 				params[constraint.ident].push(constraint.value);
-				//console.log("Param values for one parameter",params[constraint.ident])
+				
 			}
 			
 		}
@@ -142,12 +142,12 @@ function generateTestCases()
         allParams = Object.keys(params).map(function(k){return params[k];});
         
         
-        console.log("All params for one function",funcName,allParams); 
+        
         var result=allCombo(allParams);
         
-        console.log("All combinations of params for one function",funcName, result);
+        
 		// Prepare function arguments.
-		//var args = Object.keys(params).map( function(k) {return params[k]; }).join(",");
+		
 
         for(var l=0;l<result.length;l++)
         { 
@@ -159,24 +159,17 @@ function generateTestCases()
         
 
 
-        console.log("Args for one function are",funcName, args);
+        
 
 		if( pathExists || fileWithContent || pathWithFile || fileWithoutContent )
 		{
 			
 			// Bonus...generate constraint variations test cases....
 			content += generateMockFsTestCases(!pathExists,!fileWithContent,!pathWithFile, !fileWithoutContent,funcName, args);
-			content += generateMockFsTestCases(pathExists, fileWithContent,pathWithFile, fileWithoutContent, funcName, args);
-			
 			content += generateMockFsTestCases(pathExists,fileWithContent,!pathWithFile, !fileWithoutContent, funcName, args);
             content += generateMockFsTestCases(pathExists, !fileWithContent,!pathWithFile, fileWithoutContent, funcName, args);
             content += generateMockFsTestCases(!pathExists, fileWithContent,pathWithFile, !fileWithoutContent, funcName, args);
             content += generateMockFsTestCases(!pathExists, !fileWithContent,pathWithFile, fileWithoutContent, funcName, args);
-            
-            content += generateMockFsTestCases(!pathExists, fileWithContent,pathWithFile, fileWithoutContent, funcName, args);
-            content += generateMockFsTestCases(pathExists, !fileWithContent, pathWithFile, fileWithoutContent, funcName, args);
-            content += generateMockFsTestCases(pathExists, fileWithContent, !pathWithFile, fileWithoutContent, funcName, args);
-            content += generateMockFsTestCases(pathExists, fileWithContent, pathWithFile, !fileWithoutContent, funcName, args);
 
 
 		}
@@ -222,8 +215,7 @@ function generateMockFsTestCases (pathExists,fileWithContent,pathWithFile, fileW
 		JSON.stringify(mergedFS)
 		+
 	");\n";
-    console.log("Func Name in MockFs", funcName);
-    console.log("Args in MockFs", args);
+    
 	testCase += "\t"+nameOfFile+".{0}({1});\n".format(funcName, args );
 	testCase+="mock.restore();\n";
 	return testCase;
@@ -351,12 +343,7 @@ function constraints(filePath)
                            var expression = buf.substring(child.range[0], child.range[1]);
        
                             
-                            console.log("Ident",child.left.callee.object.name);
-                            console.log("value",child.left.arguments[0].value);
-                            
-                            console.log("function name",funcName);
                            
-                           console.log("operator",child.operator);
 
                           functionConstraints[funcName].constraints.push( 
                           new Constraint(
@@ -493,12 +480,7 @@ function constraints(filePath)
                            var expression = buf.substring(child.range[0], child.range[1]);
        
                             
-                            console.log("Ident",child.left.callee.object.name);
-                            console.log("value",child.left.arguments[0].value);
                             
-                            console.log("function name",funcName);
-                           
-                           console.log("operator",child.operator);
 
                           functionConstraints[funcName].constraints.push( 
                           new Constraint(
@@ -631,13 +613,12 @@ function constraints(filePath)
                     {
                         if(child.left.type=='Identifier' && params.indexOf(child.left.name)>-1 && child.right.type=='CallExpression' && child.right.callee.name)
                         {
-                        	console.log("Gauri Naik")
-                        	var x=faker.phone.phoneNumberFormat().substring(0,3);
+                        	
                             functionConstraints[funcName].constraints.push( 
 							new Constraint(
 							{
 								ident: child.left.name,
-								value: faker.phone.phoneNumberFormat(),
+								value: "\"(000) 000-0000\"",
 								funcName: funcName,
 								kind: "string",
 								operator : child.operator,
@@ -646,7 +627,43 @@ function constraints(filePath)
                             new Constraint(
 							{
 								ident: child.left.name,
-								value: x.replace("212"),
+								value: "\"(212) 000-0000\"",
+								funcName: funcName,
+								kind: "string",
+								operator : child.operator,
+								expression: expression
+							})
+
+                           
+
+							);
+
+                        }
+
+                    }
+                     if(child.type == 'AssignmentExpression' && child.operator == '=')
+                    {
+                        if(child.left.type=='Identifier' && params.indexOf(child.left.name)>-1 && child.right.type=='CallExpression' && child.right.callee.property)
+                        {
+                        	
+                        	
+
+
+
+                            functionConstraints[funcName].constraints.push( 
+							new Constraint(
+							{
+								ident: child.left.name,
+								value: "\"(000) 000-0000\"",
+								funcName: funcName,
+								kind: "string",
+								operator : child.operator,
+								expression: expression
+							}),
+                            new Constraint(
+							{
+								ident: child.left.name,
+								value: "\"(212) 000-0000\"",
 								funcName: funcName,
 								kind: "string",
 								operator : child.operator,
@@ -661,13 +678,13 @@ function constraints(filePath)
 
                     }
                     if(child.type=='CallExpression' && child.callee.name && params.indexOf(child.arguments[0].name)>-1 )
-                    {       var x=faker.phone.phoneNumberFormat().substring(0,3);
+                    {
 
                             functionConstraints[funcName].constraints.push( 
 							new Constraint(
 							{
 								ident: child.arguments[0].name,
-								value: faker.phone.phoneNumberFormat(),
+								value: "\"(000) 000-0000\"",
 								funcName: funcName,
 								kind: "string",
 								operator : child.operator,
@@ -676,7 +693,7 @@ function constraints(filePath)
                             new Constraint(
 							{
 								ident: child.arguments[0].name,
-								value: x.replace("212"),
+								value: "\"(212) 000-0000\"",
 								funcName: funcName,
 								kind: "string",
 								operator : child.operator,
@@ -691,12 +708,11 @@ function constraints(filePath)
 
                     if(child.type=='CallExpression' && child.callee.property && params.indexOf(child.callee.object.name)>-1 )
                     {
-                    	var x=faker.phone.phoneNumberFormat().substring(0,3);
                          functionConstraints[funcName].constraints.push( 
 							new Constraint(
 							{
 								ident: child.callee.object.name,
-								value: faker.phone.phoneNumberFormat(),
+								value: "\"(000) 000-0000\"",
 								funcName: funcName,
 								kind: "string",
 								operator : child.operator,
@@ -705,7 +721,7 @@ function constraints(filePath)
                             new Constraint(
 							{
 								ident: child.callee.object.name,
-								value: x.replace("212"),
+								value: "\"(212) 000-0000\"",
 								funcName: funcName,
 								kind: "string",
 								operator : child.operator,
@@ -763,7 +779,7 @@ function constraints(filePath)
 					{
 						if( child.arguments[0].name == params[p] )
 						{
-							console.log("Params in readFileSync", params[p]);
+							
 							functionConstraints[funcName].constraints.push( 
 							new Constraint(
 							{
@@ -798,7 +814,7 @@ function constraints(filePath)
 					{
 						if( child.arguments[0].name == params[p] )
 						{
-							console.log("Params in readdirSync", params[p]);
+							
 							functionConstraints[funcName].constraints.push( 
 							new Constraint(
 							{
@@ -836,7 +852,7 @@ function constraints(filePath)
 					{
 						if( child.arguments[0].name == params[p] )
 						{
-							console.log("Params in existsSync", params[p]);
+							
 							functionConstraints[funcName].constraints.push( 
 							new Constraint(
 							{
@@ -875,7 +891,7 @@ function constraints(filePath)
 					{
 						if( child.arguments[0].name == params[p] )
 						{
-							console.log("Params in existsSync", params[p]);
+							
 							functionConstraints[funcName].constraints.push( 
 							new Constraint(
 							{
